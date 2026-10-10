@@ -1,0 +1,10 @@
+.venv/
+__pycache__/
+*.pyc
+.env
+data/cache/
+data/basis.db
+frontend/node_modules/
+frontend/dist/
+backend/.cache/
+data/voice/

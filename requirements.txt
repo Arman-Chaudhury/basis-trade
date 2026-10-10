@@ -1,0 +1,12 @@
+fastapi
+uvicorn
+httpx
+pandas
+numpy
+scikit-learn
+scipy
+yfinance
+python-dotenv
+anthropic
+google-genai
+statsmodels
