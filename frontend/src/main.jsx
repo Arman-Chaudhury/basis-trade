@@ -7,6 +7,7 @@ import Overview from './pages/Overview.jsx'
 import Event from './pages/Event.jsx'
 import Calibration from './pages/Calibration.jsx'
 import Pipeline from './pages/Pipeline.jsx'
+import Research from './pages/Research.jsx'
 import { api } from './api.js'
 import { initSmooth, ScrollTrigger } from './lib/smooth.js'
 
@@ -28,6 +29,7 @@ function Shell() {
             {[['#story', 'Story'], ['#lab', 'Lab'], ['#figures', 'Map'], ['#about', 'About']].map(([h, l]) => <a key={h} href={h} className="eyebrow hover:text-bone">{l}</a>)}
           </nav> : <nav className="flex gap-1">
             <NavLink to="/pipeline" className={link}>Pipeline</NavLink>
+            <NavLink to="/research" className={link}>Research</NavLink>
             <NavLink to="/app" className={link}>Desk</NavLink>
             <NavLink to="/calibration" className={link}>Calibration</NavLink>
           </nav>}
@@ -47,6 +49,7 @@ function Shell() {
           <Route path="/events/:id" element={<Event />} />
           <Route path="/calibration" element={<Calibration />} />
           <Route path="/pipeline" element={<Pipeline />} />
+          <Route path="/research" element={<Research />} />
         </Routes>
       </main>
     </div>

@@ -4,5 +4,8 @@ import tailwindcss from '@tailwindcss/vite'
 
 export default defineConfig({
   plugins: [react(), tailwindcss()],
-  server: { proxy: { '/api': { target: 'http://localhost:8001', changeOrigin: true, rewrite: p => p.replace(/^\/api/, '') } } },
+  server: { proxy: {
+    '/api': { target: 'http://localhost:8001', changeOrigin: true, rewrite: p => p.replace(/^\/api/, '') },
+    '/leaf': { target: 'http://localhost:8001', changeOrigin: true, rewrite: p => p.replace(/^\/leaf/, '/api') },
+  } },
 })

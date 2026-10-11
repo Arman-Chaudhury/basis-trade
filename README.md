@@ -22,7 +22,7 @@ curl -s -X POST localhost:8000/pipeline -H 'Content-Type: application/json' \
 ```
 Endpoints: `POST /pipeline`, `GET /releases`, `POST /voice`, `GET /ledger`, `POST /ledger/{id}/settle`, plus Basis (`/events`, `/calibration`, `/scenario`, `/belief`) and Leaf (`/api/ex/assess`, `/api/scan/multi`).
 
-Frontend: the Basis topology landing + desk + **`/pipeline`** (`cd frontend && npm install && npm run dev`; the Vite proxy expects the backend on :8001).
+Frontend: the Basis topology landing + desk + **`/pipeline`** + **`/research`** (Leaf's screener UI, vendored under `frontend/src/leaf`, scoped CSS, talks to the mounted Leaf routers through the `/leaf` proxy) (`cd frontend && npm install && npm run dev`; the Vite proxy expects the backend on :8001).
 
 ## STATUS (2026-10-10)
 - Pipeline works end to end for `cpi`, `nfp` and `fomc`, backend and `/pipeline` page, verified in the browser. Fed tails are the Cut-0.25 and Hike buckets as a 25bp surprise against the expected move (kernels: −0.6% SPX, 20bp on the 2y per 25bp).

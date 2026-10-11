@@ -1,0 +1,11 @@
+/* Leaf inside Basis: same components, Basis palette and type. */
+.leaf {
+  --spruce: var(--color-ink-3); --spruce-2: var(--color-ink-2); --paper: var(--color-ink); --white: var(--color-ink-2);
+  --ink: var(--color-bone); --ink-2: var(--color-grey-300); --line: var(--color-grey-700);
+  --leaf: #C96A3F; --a: #C96A3F; --b: #5B6CC9; --lens: rgba(201,106,63,0.14);
+  --on-dark: var(--color-bone); --on-dark-2: var(--color-grey-300); --a-dark: #E8A57F; --b-dark: #A9B1F5;
+  --display: var(--font-display); --body: var(--font-sans); --r: 10px; --wrap: 1180px; --gutter: 0px;
+  background: transparent; color: var(--color-bone); font: 400 15px/1.55 var(--font-sans);
+}
+.leaf .wrap { padding: 0; }
+.leaf .leaf-wordmark { font-family: var(--font-display); }
