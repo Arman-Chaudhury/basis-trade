@@ -12,6 +12,11 @@ export const api = {
   arb: () => j('/arb'),
   health: () => j('/health'),
   scenario: (event_id, p_new) => j('/scenario', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ event_id, p_new }) }),
+  pipeline: sentence => j('/pipeline', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ sentence }) }),
+  ledger: () => j('/ledger'),
+  settle: (id, happened) => j(`/ledger/${id}/settle`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ happened }) }),
+  voiceStatus: () => j('/voice/status'),
+  voice: async text => { const r = await fetch(BASE + '/voice', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text }) }); if (!r.ok) throw new Error((await r.json().catch(() => ({}))).detail || r.status); return r.blob() },
   belief: belief => j('/belief', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ belief }) }),
 }
 export const pct = (x, d = 0) => (x == null ? '—' : `${(x * 100).toFixed(d)}%`)

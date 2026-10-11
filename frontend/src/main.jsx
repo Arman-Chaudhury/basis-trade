@@ -6,6 +6,7 @@ import Landing from './pages/Landing.jsx'
 import Overview from './pages/Overview.jsx'
 import Event from './pages/Event.jsx'
 import Calibration from './pages/Calibration.jsx'
+import Pipeline from './pages/Pipeline.jsx'
 import { api } from './api.js'
 import { initSmooth, ScrollTrigger } from './lib/smooth.js'
 
@@ -26,6 +27,7 @@ function Shell() {
           {onLanding ? <nav className="hidden md:flex gap-6 ml-6">
             {[['#story', 'Story'], ['#lab', 'Lab'], ['#figures', 'Map'], ['#about', 'About']].map(([h, l]) => <a key={h} href={h} className="eyebrow hover:text-bone">{l}</a>)}
           </nav> : <nav className="flex gap-1">
+            <NavLink to="/pipeline" className={link}>Pipeline</NavLink>
             <NavLink to="/app" className={link}>Desk</NavLink>
             <NavLink to="/calibration" className={link}>Calibration</NavLink>
           </nav>}
@@ -34,7 +36,7 @@ function Shell() {
             {health && !health.ok && <span className="rounded-full border border-rose-400/40 text-rose-200 px-2 py-0.5">API DOWN</span>}
             {!onLanding && health?.last_refresh?.ts && <span>refreshed {new Date(health.last_refresh.ts).toLocaleTimeString()}</span>}
             <button onClick={() => setDark(d => !d)} className="btn-text" title="toggle theme">{dark ? 'Light' : 'Dark'}</button>
-            {onLanding ? <Link to="/app" className="btn-text">Open the desk</Link> : <Link to="/" className="btn-text">Home</Link>}
+            {onLanding ? <Link to="/pipeline" className="btn-text">Run the pipeline</Link> : <Link to="/" className="btn-text">Home</Link>}
           </div>
         </div>
       </header>
@@ -44,6 +46,7 @@ function Shell() {
           <Route path="/app" element={<Overview />} />
           <Route path="/events/:id" element={<Event />} />
           <Route path="/calibration" element={<Calibration />} />
+          <Route path="/pipeline" element={<Pipeline />} />
         </Routes>
       </main>
     </div>

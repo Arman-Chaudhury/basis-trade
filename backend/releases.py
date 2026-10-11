@@ -16,7 +16,7 @@ SPECS = {
             "kind": "continuous", "unit": "%", "dp": 2, "kernels": {"spx": -0.525, "rate2y": 4.2},
             "reference": {"consensus": 3.0, "trailSigma": 0.15, "lowThreshold": 2.75, "highThreshold": 3.35, "optLow": 0.092, "optHigh": 0.114, "optUnderlying": "SPY"}},
     "fomc": {"id": "fomc", "name": "Fed rate decision", "short": "Fed decision", "tailWords": {"low": "dovish", "high": "hawkish"},
-             "kind": "discrete", "unit": "", "dp": 1, "kernels": {"rateFull": 25, "spx": 0, "rate2y": 0},
+             "kind": "discrete", "unit": "", "dp": 1, "kernels": {"rateFull": 25, "spx": -0.6, "rate2y": 20},  # per 25bp of surprise: ~-0.6% SPX, ~20bp on the 2y
              "reference": {"ois": [0.020, 0.580, 0.395, 0.005], "label": "swaps market"}},
     "nfp": {"id": "nfp", "name": "Jobs report (payrolls)", "short": "jobs report", "tailWords": {"low": "weak", "high": "strong"},
             "kind": "continuous", "unit": "k", "dp": 0, "kernels": {"spx": 0.41, "rate2y": 3.1},

@@ -13,21 +13,29 @@ MIN_OI = 500
 def contract_hedge(sig, side, loss, trust):
     """The contract that pays in the tail, sized so its payout covers the loss, priced from the ladder."""
     if loss <= 0 or not sig.get("tails"): return {"skipped": "No loss in this tail."}
-    t = sig["tails"][side]; edges, p = sig["edges"], sig["p"]
+    t = sig["tails"][side]
+    if sig["kind"] == "discrete":
+        fair = r2(t["pModel"]); label = t["label"]; strike = None
+        return _price_contract(sig, side, loss, trust, fair, label, strike)
+    edges, p = sig["edges"], sig["p"]
     # nearest bucket edge to the threshold is the strike the venue lists
     strike = min(edges[1:-1], key=lambda e: abs(e - t["threshold"])) if len(edges) > 2 else t["threshold"]
     fair = (1 - cdf_at(edges, p, strike)) if side == "high" else cdf_at(edges, p, strike)
     fair = r2(fair)
+    label = f"{'Above' if side == 'high' else 'Below'} {strike:g}{sig['unit']}"
+    return _price_contract(sig, side, loss, trust, fair, label, strike)
+
+
+def _price_contract(sig, side, loss, trust, fair, label, strike):
     ask = r2(min(0.99, fair + 0.01)); bid = r2(max(0.01, fair - 0.01))  # no live book in the snapshot: one-cent half-spread, labelled
     payout_per = 1 - ask
     contracts = math.ceil(loss / max(payout_per, 0.01))
     cost = r2(contracts * ask)
     over_fair = r2(ask - fair)
     if trust < 40: verdict, why = "skip", f"venue trust {trust}/100 is below the gate"
-    elif ask > fair * 1.10: verdict, why = "skip", "costs more than the odds imply"
+    elif ask > fair * 1.10 + 0.01: verdict, why = "skip", "costs more than the odds imply"
     elif ask < fair * 0.95: verdict, why = "buy", "cheaper than the odds imply"
     else: verdict, why = "fair", "priced about where the odds put it"
-    label = f"{'Above' if side == 'high' else 'Below'} {strike:g}{sig['unit']}"
     return {"instrument": "prediction_contract", "venue": "Kalshi via IBKR (snapshot)", "contract": f'YES on "{label}"', "strike": strike, "expiry": sig["date"],
             "fair": fair, "ask": ask, "bid": bid, "book": "estimated (snapshot has no live book)", "contracts": contracts, "cost": cost, "payout": contracts,
             "covers": r2(loss), "overFair": over_fair, "trust": trust, "verdict": verdict, "why": why}

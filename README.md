@@ -22,13 +22,11 @@ curl -s -X POST localhost:8000/pipeline -H 'Content-Type: application/json' \
 ```
 Endpoints: `POST /pipeline`, `GET /releases`, `POST /voice`, `GET /ledger`, `POST /ledger/{id}/settle`, plus Basis (`/events`, `/calibration`, `/scenario`, `/belief`) and Leaf (`/api/ex/assess`, `/api/scan/multi`).
 
-Frontend: the Basis topology landing + desk (`cd frontend && npm install && npm run dev`). **The Pipeline page is not built yet** — see STATUS below.
+Frontend: the Basis topology landing + desk + **`/pipeline`** (`cd frontend && npm install && npm run dev`; the Vite proxy expects the backend on :8001).
 
 ## STATUS (2026-10-10)
-- Backend pipeline works end to end for `cpi` and `nfp`. Verified: three sentences → holdings priced, tail loss, contract sized, Leaf equity hedge (SH / PSQ), history, ledger entry.
-- `fomc` (discrete) has no tail impact / contract yet: needs a rate-move → duration mapping in `backend/exposure.py` and a bucket contract in `backend/hedge.py`.
+- Pipeline works end to end for `cpi`, `nfp` and `fomc`, backend and `/pipeline` page, verified in the browser. Fed tails are the Cut-0.25 and Hike buckets as a 25bp surprise against the expected move (kernels: −0.6% SPX, 20bp on the 2y per 25bp).
 - Ladders come from Atropos's committed snapshot (`data/atropos/`). Live IBKR/ForecastEx readers are in Atropos `lib/markets.js`, not ported.
 - Contract book is estimated (fair ± 1¢): wire a live book for real bid/ask.
 - History is the Atropos sample-portfolio snapshot, labelled; live BLS/ALFRED path to port from `lib/history.js`.
-- TODO frontend: `/pipeline` page (sentence box → ladder chart → impacts → contract vs equity cards → history strip → verdict + "Hear it" → ledger).
 - TODO: Tiger Data (Postgres hypertables for `prices`/`market_state`), GoDaddy domain.

@@ -91,7 +91,7 @@ def run(text):
     rows = exposure.impacts(holdings, sig)
     tail_total = r2(sum(r[side]["dollars"] for r in rows)) if rows else 0.0
     loss = max(0.0, -tail_total)
-    contract = hedge.contract_hedge(sig, side, loss, sig["trust"]) if sig.get("tails") else {"skipped": "Discrete release: no tail contract in this version."}
+    contract = hedge.contract_hedge(sig, side, loss, sig["trust"]) if sig.get("tails") else {"skipped": "No tails for this release."}
     equity = hedge.equity_hedge(holdings, 1) if loss > 0 else {"skipped": "This tail does not hurt the book."}
     hist = history.fits(holdings, parsed["release"], side)
     words = sig["tailWords"]

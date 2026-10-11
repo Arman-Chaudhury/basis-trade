@@ -92,6 +92,11 @@ def analyse(ev, use_calibrated=True):
         out.update({"focus": {"label": ev["labels"][i], "market": r2(p[i] * 100), "reference": r2(ois[i] * 100), "gapPp": r2((p[i] - ois[i]) * 100)},
                     "expectedMoveBp": {"market": r2(em), "reference": r2(er)}, "direction": {"rateBp": r2(abs(gap)), "netBp": r2(net), "sign": (gap > 0) - (gap < 0)},
                     "referenceProbs": ois, "referenceLabel": ref.get("label", "swaps market"), "verdict": "direction" if net > COST["directionMinNetBp"] else "none"})
+        # Tails for a discrete release: the dovish bucket (Cut 0.25) and the hawkish bucket (Hike), as a rate
+        # surprise against the expected move, in units of 25bp. z drives the same impact model as a continuous release.
+        out["tails"] = {"low": {"label": ev["labels"][1], "threshold": None, "pModel": r2(p[1]), "pOptions": None, "z": (MOVES_BP[1] - em) / 25, "rateMove": r2(MOVES_BP[1] - em), "bucket": 1},
+                        "high": {"label": ev["labels"][3], "threshold": None, "pModel": r2(p[3]), "pOptions": None, "z": (MOVES_BP[3] - em) / 25, "rateMove": r2(MOVES_BP[3] - em), "bucket": 3}}
+        for t in out["tails"].values(): t["spxMove"] = r2(ev["kernels"]["spx"] * t["z"]); t["gapPp"] = None
         show = lambda ps: ", ".join(f"{l.lower()} {p1(x * 100)}%" for l, x in zip(ev["labels"], ps) if x >= 0.02)
         sgn = lambda x: ("+" if x >= 0 else "−") + str(abs(r2(x)))
         out["notes"].append(f"The odds: {show(p)}. {out['referenceLabel'].capitalize()}: {show(ois)}. Expected move {sgn(em)}bp against {sgn(er)}bp, a {r2(abs(gap))}bp gap against {COST['rateRoundTrip']}bp to trade" + (": too thin to act on." if out["verdict"] == "none" else "."))

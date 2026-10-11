@@ -70,11 +70,11 @@ export default function Landing({ dark = false }) {
       <section id="hero" className="relative z-10 h-[100svh]">
         <div className="hero-copy absolute inset-x-0 bottom-0 px-6 md:px-8 pb-10">
           <div className="grid md:grid-cols-[1fr_auto] items-end gap-8">
-            <h1 className="h1 max-w-4xl">Meet the odds<br />at the edge.</h1>
-            <p className="max-w-sm text-grey-300 text-lg md:pb-4">We turn prediction-market prices into a calibrated, trust-weighted signal.</p>
+            <h1 className="h1 max-w-4xl">From the odds<br />to the trade.</h1>
+            <p className="max-w-sm text-grey-300 text-lg md:pb-4">Say what you hold and what you fear. We read the odds, price your exposure, and find the cheapest honest protection, or none.</p>
           </div>
           <div className="rule mt-8" style={{ background: dark ? 'rgba(237,237,234,0.3)' : 'rgba(21,21,21,0.25)' }} />
-          <div className="mt-4 flex items-center justify-between eyebrow"><span>Basis ©2026 · Kalshi · Polymarket · CME · Deribit</span><a href="#story">Explore ↓</a></div>
+          <div className="mt-4 flex items-center justify-between eyebrow"><span>Basis ©2026 · Kalshi · Polymarket · ForecastEx · CME · Deribit</span><span className="flex gap-6"><Link to="/pipeline">Run the pipeline →</Link><a href="#story">Explore ↓</a></span></div>
         </div>
       </section>
 
