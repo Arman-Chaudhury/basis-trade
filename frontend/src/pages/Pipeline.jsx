@@ -68,7 +68,8 @@ export default function Pipeline() {
             </BarChart></ResponsiveContainer>
           </div>
           <ul className="mt-3 text-sm text-grey-300 space-y-1">{sig.notes.map((n, i) => <li key={i}>{n}</li>)}</ul>
-          <div className="mt-3 flex flex-wrap gap-2">{sig.venues?.filter(v => v.ok).map(v => <span key={v.venue} className="chip">{v.venue} <span className="mono text-grey-300">{v.trust}</span></span>)}</div>
+          <div className="mt-3 flex flex-wrap gap-2">{sig.venues?.filter(v => v.ok).map(v => <span key={v.venue} className="chip" title={v.title || ''}>{v.live && <span className="dot" style={{ background: '#2fbf71' }} />}{v.venue} <span className="mono text-grey-300">{v.trust}</span>{v.top && <span className="text-grey-500">· {v.top} {Math.round((v.topP || 0) * 100)}%</span>}</span>)}
+            {sig.venues?.filter(v => !v.ok).map(v => <span key={v.venue} className="chip opacity-50" title={v.error}>{v.venue} · down</span>)}</div>
         </Step>
 
         <Step n="02 · Exposure" title={`A ${sig.tailWords[side]} ${sig.short}`} note={tail ? `tail: ${tail.label || `${side === 'high' ? '≥' : '≤'} ${tail.threshold}${sig.unit}`} · odds ${pct(tail.pModel)} · SPX ${tail.spxMove}% · 2y ${tail.rateMove}bp` : ''}>

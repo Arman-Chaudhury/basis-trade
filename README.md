@@ -4,7 +4,7 @@ One sentence in, one honest trade (or none) out. Three Hack Knight projects fuse
 
 | Step | What | From |
 |---|---|---|
-| 1. Signal | Release ladders (CPI, Fed, payrolls) across venues, calibrated by an isotonic curve fit on 628 settled Kalshi markets, trust-scored per venue | **Basis** + Atropos ladders |
+| 1. Signal | Release ladders (CPI, Fed, payrolls) across six venues: **Kalshi and Polymarket live** (`backend/venues_live.py`), plus Kalshi via IBKR, ForecastEx, Limitless, Futuur and CME via IBKR from Atropos's snapshot; calibrated by an isotonic curve fit on 628 settled Kalshi markets, trust-scored per venue; consensus = live Kalshi | **Basis** + Atropos ladders |
 | 2. Exposure | Your holdings bucketed and moved by each tail of the release, in dollars (deterministic engine, ported) | **Atropos** |
 | 3. Express | Side by side: the prediction-market contract that pays in that tail, sized to the loss and trust-gated; and the equity hedge Leaf's pair screener finds (best hedge effectiveness) | **Atropos** + **Leaf** |
 | 4. Does it pay when you lose? | Release-day backtest since 2021 (snapshot while BLS/ALFRED are unreachable) | Atropos |
@@ -26,7 +26,7 @@ Frontend: the Basis topology landing + desk + **`/pipeline`** + **`/research`** 
 
 ## STATUS (2026-10-10)
 - Pipeline works end to end for `cpi`, `nfp` and `fomc`, backend and `/pipeline` page, verified in the browser. Fed tails are the Cut-0.25 and Hike buckets as a 25bp surprise against the expected move (kernels: −0.6% SPX, 20bp on the 2y per 25bp).
-- Ladders come from Atropos's committed snapshot (`data/atropos/`). Live IBKR/ForecastEx readers are in Atropos `lib/markets.js`, not ported.
+- Kalshi and Polymarket ladders are live (60s cache, falls back to last good response). IBKR/ForecastEx/Limitless/Futuur/CME rows come from Atropos's committed snapshot (`data/atropos/`); their live readers are in Atropos `lib/markets.js`, not yet ported.
 - Contract book is estimated (fair ± 1¢): wire a live book for real bid/ask.
 - History is the Atropos sample-portfolio snapshot, labelled; live BLS/ALFRED path to port from `lib/history.js`.
 - TODO: Tiger Data (Postgres hypertables for `prices`/`market_state`), GoDaddy domain.

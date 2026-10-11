@@ -64,27 +64,42 @@ def venue_trust(v, all_vols):
     return trust_score(state, all_vols, v.get("date") or "2026-12-31")
 
 
-def ladders():
-    """Every release with its consensus ladder plus per-venue ladders, calibrated, with trust."""
+def ladders(live=True):
+    """Every release with its consensus ladder plus per-venue ladders, calibrated, with trust.
+
+    Venues: live Kalshi and Polymarket (backend/venues_live.py) first, then Atropos's snapshot venues
+    (Kalshi via IBKR, ForecastEx, Limitless, Futuur, CME via IBKR). The consensus ladder is live Kalshi when it
+    answers, else the snapshot. Every ladder says where it came from."""
+    from backend.venues_live import live_venues
     tape, venues = _snapshot()
     by_id = {s["id"]: s for s in tape["signals"]}
+    live_all = {rid: (live_venues(rid, SPECS[rid]["unit"]) if live else []) for rid in SPECS}
     vol_pool = [v.get("volume") for r in venues["releases"] for v in r["venues"] if v.get("ok") and v.get("volume")]
+    vol_pool += [v.get("volume") for vs in live_all.values() for v in vs if v.get("ok") and v.get("volume")]
     out = []
     for rid, spec in SPECS.items():
         sig = by_id.get(rid)
         if not sig: continue
-        labels, p = sig["labels"], sig["p"]
-        edges = _edges(labels) if spec["kind"] == "continuous" else None
         rel_venues = next((r for r in venues["releases"] if r["id"] == rid), {"venues": []})
         vlist = []
+        for v in live_all[rid]:
+            if not v.get("ok"): vlist.append({"venue": v["venue"], "ok": False, "error": v.get("error"), "live": True}); continue
+            t = venue_trust({**v, "date": sig["date"]}, vol_pool)
+            top = max(range(len(v["p"])), key=lambda i: v["p"][i])
+            vlist.append({**v, "live": True, "trust": t["score"], "trust_breakdown": t["components"], "top": v["labels"][top], "topP": v["p"][top]})
         for v in rel_venues["venues"]:
-            if not v.get("ok"): vlist.append({"venue": v["venue"], "ok": False, "error": v.get("error")}); continue
+            if v["venue"] == "Kalshi": continue  # the live reader above replaces the snapshot's (unreachable) direct Kalshi row
+            if not v.get("ok"): vlist.append({"venue": v["venue"], "ok": False, "error": v.get("error"), "live": False}); continue
             t = venue_trust(v, vol_pool)
-            vlist.append({"venue": v["venue"], "ok": True, "title": v.get("title"), "labels": v["labels"], "p": v["p"], "volume": v.get("volume"),
-                          "trust": t["score"], "trust_breakdown": t["components"], "top": v.get("top"), "topP": v.get("topP")})
+            vlist.append({"venue": v["venue"], "ok": True, "live": False, "title": v.get("title"), "labels": v["labels"], "p": v["p"], "volume": v.get("volume"),
+                          "trust": t["score"], "trust_breakdown": t["components"], "top": v.get("top"), "topP": v.get("topP"), "source": "snapshot"})
+        lk = next((v for v in vlist if v["venue"] == "Kalshi" and v.get("ok")), None)
+        if lk: labels, p, source, as_of = lk["labels"], lk["p"], "Kalshi live", datetime.now(timezone.utc).isoformat()
+        else: labels, p, source, as_of = sig["labels"], sig["p"], sig.get("source", "snapshot") + " (snapshot)", tape["asOf"]
+        edges = _edges(labels) if spec["kind"] == "continuous" else None
         cal = calibrate_ladder(p)
-        out.append({**spec, "date": sig["date"], "title": sig.get("title"), "labels": labels, "p": p, "p_calibrated": cal, "edges": edges,
-                    "source": sig.get("source", "snapshot"), "asOf": tape["asOf"], "venues": vlist,
+        out.append({**spec, "date": sig["date"], "title": (lk or {}).get("title") or sig.get("title"), "labels": labels, "p": p, "p_calibrated": cal, "edges": edges,
+                    "source": source, "asOf": as_of, "venues": vlist,
                     "depth": {"volume": max((v.get("volume") or 0 for v in rel_venues["venues"] if v.get("ok")), default=0), "medianSpread": None, "emptyBooks": 0, "markets": len(labels)},
                     "trust": max((v["trust"] for v in vlist if v.get("ok")), default=0)})
     return out
