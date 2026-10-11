@@ -1,18 +1,18 @@
 # Basis — from the odds to the trade
 
-**One product from three projects.** Ethan's one-scroll landing is the front door (`/`). Behind it, one website with two services:
+**One product from three projects.** Ethan's Atropos landing is the front door (`/`, served by the Node service; his one-scroll page is at `/node/topo/`). Behind it, one website with two services:
 
 - **Python (FastAPI, :8001)** — Basis (calibration, basis, trust, betas), Leaf (Gemini EX + Lego screener), Atropos's core ported (exposure, hedge, history, ledger), and the pipeline that chains them.
 - **Node (Atropos as-is, :4411, vendored under `services/atropos`)** — the six venue readers, Atty's voiced walkthrough, Jev, SnapTrade, 13F, news, fine-print rules, the console.
 
-The Vite gateway (:5177) makes them one origin: `/api/*` → Python, `/leaf/*` → Leaf routers, `/node/*` and `/landing/api/*` → Node.
+The Vite gateway (:5177) makes them one origin: `/py/*` → Python, `/leaf/*` → Leaf routers, `/api/*` and `/node/*` → Node (so Atropos's pages run unmodified).
 
 | Route | What | From |
 |---|---|---|
-| `/` | one-scroll landing, fed live by both services | Ethan |
+| `/` | Atropos landing (odds this week, how it works, research), live from the Node service | Ethan |
 | `/pipeline` | sentence → calibrated multi-venue ladder → exposure → contract vs equity hedge → history → verdict → ledger | all three |
 | `/research` | Leaf's screener and strategy math | Juvo |
-| `/console`, `/atty` | Atropos's console and Atty's walkthrough | Ethan |
+| `/console`, `/atty`, `/node/topo/` | Atropos's console, Atty's walkthrough, the one-scroll page | Ethan |
 | `/app`, `/calibration`, `/events/:id` | Basis's desk and calibration curve | Arman |
 | `/gallery` | the earlier topology landing | Arman |
 
@@ -48,4 +48,8 @@ Frontend: the Basis topology landing + desk + **`/pipeline`** + **`/research`** 
 - All venue ladders are live when the Node service is up (60s cache, last-good fallback); without it the Atropos snapshot rows are used.
 - Contract book is estimated (fair ± 1¢): wire a live book for real bid/ask.
 - History is the Atropos sample-portfolio snapshot, labelled; live BLS/ALFRED path to port from `lib/history.js`.
-- TODO: Tiger Data (Postgres hypertables for `prices`/`market_state`), GoDaddy domain.
+- Holdings: from the sentence; else the Atropos service's portfolio (SnapTrade when linked in the console, else its sample).
+- Context step: SEC 13F funds holding what you hold, and news ranked for the release, both from the Atropos service.
+- Every verdict passes `backend/check.py`: each figure in the sentence must trace to a computed number (Jev's rule, no key needed; Jev itself runs in the Node service with a TypeSafe key).
+- Tiger Data: set `DATABASE_URL` to mirror prices, every venue ladder and the ledger into Postgres (`backend/timeseries.py`; hypertables when the timescaledb extension exists). `GET /py/timeseries/status`, `GET /py/timeseries/ladders/cpi?hours=24` for the live dashboard. Tested against a local Postgres 16; the Tiger cloud needs only the URL.
+- Domain (GoDaddy track): register at godaddy.com and point an A/CNAME at the deployment; nothing in the code depends on it.

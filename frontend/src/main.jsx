@@ -41,13 +41,13 @@ function Shell() {
             {health && !health.ok && <span className="rounded-full border border-rose-400/40 text-rose-200 px-2 py-0.5">API DOWN</span>}
             {!onLanding && health?.last_refresh?.ts && <span>refreshed {new Date(health.last_refresh.ts).toLocaleTimeString()}</span>}
             <button onClick={() => setDark(d => !d)} className="btn-text" title="toggle theme">{dark ? 'Light' : 'Dark'}</button>
-            {onLanding ? <Link to="/pipeline" className="btn-text">Run the pipeline</Link> : <a href="/landing/index.html" className="btn-text">Home</a>}
+            {onLanding ? <Link to="/pipeline" className="btn-text">Run the pipeline</Link> : <a href="/node/index.html" className="btn-text">Home</a>}
           </div>
         </div>
       </header>
       <main className={onLanding ? '' : 'mx-auto max-w-7xl px-5 py-6'}>
         <Routes>
-          <Route path="/" element={<External to="/landing/index.html" />} />
+          <Route path="/" element={<External to="/node/index.html" />} />
           <Route path="/gallery" element={<Landing dark={dark} />} />
           <Route path="/console" element={<External to="/node/console.html" />} />
           <Route path="/atty" element={<External to="/node/atty/" />} />

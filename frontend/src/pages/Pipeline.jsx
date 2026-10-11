@@ -73,6 +73,7 @@ export default function Pipeline() {
         </Step>
 
         <Step n="02 · Exposure" title={`A ${sig.tailWords[side]} ${sig.short}`} note={tail ? `tail: ${tail.label || `${side === 'high' ? '≥' : '≤'} ${tail.threshold}${sig.unit}`} · odds ${pct(tail.pModel)} · SPX ${tail.spxMove}% · 2y ${tail.rateMove}bp` : ''}>
+          <div className="eyebrow mb-2">holdings from: {(out.provenance?.portfolio || 'sample') === 'sentence' ? 'your sentence' : (out.provenance?.portfolio || '').startsWith('atropos:') ? (out.provenance.portfolio === 'atropos:sample' ? "Atropos's sample portfolio (link a brokerage in the console to use yours)" : 'your linked brokerage, read-only') : 'sample'}</div>
           <table className="w-full text-sm">
             <thead><tr className="eyebrow"><th className="text-left py-2 font-normal">holding</th><th className="text-left font-normal">bucket</th><th className="text-right font-normal">value</th><th className="text-right font-normal">move</th><th className="text-right font-normal">dollars</th></tr></thead>
             <tbody>{out.impacts.map(r => (
@@ -123,7 +124,7 @@ export default function Pipeline() {
           </>)}
         </Step>
 
-        <Step n="05 · Verdict" title="One call, recorded">
+        <Step n="05 · Verdict" title="One call, recorded" note={out.check ? (out.check.ok ? 'every figure traced to the numbers' : `untraced: ${out.check.untraced.join(', ')}`) : ''}>
           <p className="text-lg leading-relaxed max-w-3xl">{out.verdict}</p>
           <div className="mt-4 flex items-center gap-4">
             <button onClick={hear} disabled={!voice.configured} className="btn-text disabled:opacity-40" title={voice.configured ? 'ElevenLabs' : 'set ELEVENLABS_API_KEY'}>Hear it</button>
@@ -132,6 +133,27 @@ export default function Pipeline() {
           </div>
         </Step>
       </>)}
+
+      {out?.context && (out.context.funds?.funds?.length > 0 || out.context.news?.articles?.length > 0) && (
+        <Step n="06 · Context" title="Who else holds this, and what's in the news" note="SEC 13F filings and news feeds, from the Atropos service">
+          <div className="grid md:grid-cols-2 gap-4">
+            <div className="card">
+              <div className="eyebrow">Public money next to you</div>
+              <ul className="mt-3 space-y-2 text-sm">{out.context.funds.funds.map(f => (
+                <li key={f.name} className="border-t border-grey-700/60 pt-2"><div>{f.name}</div><div className="eyebrow">{f.kind.replace('_', ' ')} · {f.period} · holds {f.overlap.map(o => o.ticker).join(', ')}{f.exposure?.[out.signal.id] ? ` · ${out.signal.tailWords[side]} tail ${f.exposure[out.signal.id][side] > 0 ? '+' : ''}${f.exposure[out.signal.id][side]}%` : ''}</div></li>))}
+              </ul>
+              {out.context.funds.note && <div className="eyebrow mt-3">{out.context.funds.note}</div>}
+            </div>
+            <div className="card">
+              <div className="eyebrow">In the news · {out.context.news.query}</div>
+              <ul className="mt-3 space-y-2 text-sm">{out.context.news.articles.map(a => (
+                <li key={a.url} className="border-t border-grey-700/60 pt-2"><a href={a.url} target="_blank" rel="noreferrer" className="hover:underline">{a.title}</a><div className="eyebrow">{a.source || ''}</div></li>))}
+              </ul>
+              {out.context.news.brief && <p className="mt-3 text-sm text-grey-300">{out.context.news.brief}</p>}
+            </div>
+          </div>
+        </Step>
+      )}
 
       {ledger.length > 0 && (
         <Step n="Ledger" title="Calls and settlements" note="settle against the first print after the release">

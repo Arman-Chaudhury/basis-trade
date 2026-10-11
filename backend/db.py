@@ -96,6 +96,11 @@ def upsert_asset(con, ticker, rows):
     with tx(con):
         con.executemany("INSERT OR REPLACE INTO asset_prices(ticker, date, close) VALUES (?,?,?)",
                         [(ticker, d, c) for d, c in rows])
+    try:
+        from backend import timeseries
+        timeseries.mirror_prices(ticker, rows)
+    except Exception:  # noqa: BLE001
+        pass
 
 
 def get_asset(con, ticker):

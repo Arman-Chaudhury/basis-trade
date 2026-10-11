@@ -1,6 +1,6 @@
 """From a sentence to a trade: parse → signal (ladder) → exposure → express (contract vs equity hedge) → history → ledger."""
 import json, logging, re
-from backend import releases, exposure, hedge, history, ledger, config
+from backend import releases, exposure, hedge, history, ledger, config, atropos_client, check
 from backend.exposure import bucket_of, r2, p1
 
 log = logging.getLogger("basis.pipeline")
@@ -51,7 +51,10 @@ def _parse_rules(text):
 
 def parse(text):
     out = _parse_llm(text) or _parse_rules(text)
-    if not out.get("holdings"): out["holdings"] = [{"symbol": s, "units": u} for s, u in SAMPLE_PORTFOLIO]; out["portfolio_source"] = "sample"
+    if not out.get("holdings"):
+        node = atropos_client.portfolio()
+        if node and node["holdings"]: out["holdings"] = node["holdings"]; out["portfolio_source"] = "atropos:" + node["source"]  # SnapTrade when linked, else Atropos's sample
+        else: out["holdings"] = [{"symbol": s, "units": u} for s, u in SAMPLE_PORTFOLIO]; out["portfolio_source"] = "sample"
     else: out["portfolio_source"] = "sentence"
     out["release"] = out.get("release") or "cpi"
     return out
@@ -105,8 +108,12 @@ def run(text):
                    f"{contract['contracts']} contracts of {contract['contract']} cost ${contract['cost']:,.2f} and pay ${contract['payout']:,.0f}: {contract['why']} ({contract['verdict']}).")
     if hist.get("hitRate") is not None:
         verdict += f" On the {hist['lossDays']} {words[side]}-side loss days since {hist['from'][:4]}, that protection would have paid on {hist['paidOnLoss']}."
+    facts = {"holdings": holdings, "total": total, "loss": loss, "tail_total": tail_total, "contract": contract, "history": hist, "signal": {k: v for k, v in sig.items() if k != "notes"}}
+    checked = check.check(verdict, facts)
+    syms = [h["symbol"] for h in holdings]
+    context = {"funds": atropos_client.funds_holding(syms), "news": atropos_client.news(f"{sig['short']} {words[side]}")}
     eid = ledger.record({"release": parsed["release"], "side": side, "verdict": contract.get("verdict", "skip"), "contract": contract.get("contract"), "contracts": contract.get("contracts"),
                          "cost": contract.get("cost"), "payout": contract.get("payout"), "loss": loss, "trust": sig["trust"], "sentence": text})
     return {"parsed": parsed, "holdings": holdings, "total": total, "signal": sig, "side": side, "impacts": rows, "tail_total": tail_total, "loss": loss,
-            "express": {"contract": contract, "equity": equity}, "history": hist, "verdict": verdict, "ledger_id": eid,
-            "provenance": {"ladder": sig["source"], "calibration": "Basis isotonic curve", "engine": "Atropos (ported)", "screener": "Leaf", "parser": parsed["parser"]}}
+            "express": {"contract": contract, "equity": equity}, "history": hist, "verdict": verdict, "check": checked, "context": context, "ledger_id": eid,
+            "provenance": {"ladder": sig["source"], "calibration": "Basis isotonic curve", "engine": "Atropos (ported)", "screener": "Leaf", "parser": parsed["parser"], "portfolio": parsed["portfolio_source"]}}

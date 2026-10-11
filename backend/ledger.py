@@ -17,6 +17,8 @@ def record(entry):
         con.execute("INSERT INTO ledger VALUES (?,?,?,?,?,?,?,?,?,?,?,0,NULL,NULL,?)",
                     (eid, datetime.now(timezone.utc).isoformat(), entry["release"], entry["side"], entry["verdict"], entry.get("contract"), entry.get("contracts"),
                      entry.get("cost"), entry.get("payout"), entry.get("loss"), entry.get("trust"), json.dumps(entry)))
+    from backend import timeseries
+    timeseries.mirror_ledger(entry, eid)
     return eid
 
 

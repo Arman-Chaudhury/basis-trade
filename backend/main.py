@@ -232,8 +232,22 @@ def pipeline(inp: PipelineIn):
 
 @app.get("/releases")
 def releases_():
-    from backend import releases
-    return releases.ladders()
+    from backend import releases, timeseries
+    out = releases.ladders()
+    timeseries.mirror_ladders(out)
+    return out
+
+
+@app.get("/timeseries/status")
+def timeseries_status():
+    from backend import timeseries
+    return timeseries.status()
+
+
+@app.get("/timeseries/ladders/{release}")
+def timeseries_ladders(release: str, hours: int = 24):
+    from backend import timeseries
+    return timeseries.recent_ladders(release, hours)
 
 
 class VoiceIn(BaseModel):
@@ -243,6 +257,13 @@ class VoiceIn(BaseModel):
 @app.post("/voice")
 def voice_(inp: VoiceIn):
     from backend import voice
+    if not voice.configured():  # Atty's voice lives in the Node service; use it when it has the key
+        try:
+            import httpx, os
+            r = httpx.post(f"{os.getenv('ATROPOS_URL', 'http://127.0.0.1:4411')}/api/voice", json={"text": inp.text[:300]}, timeout=30)
+            if r.status_code == 200: return Response(content=r.content, media_type="audio/mpeg")
+        except Exception:  # noqa: BLE001
+            pass
     try:
         return Response(content=voice.speak(inp.text), media_type="audio/mpeg")
     except ValueError as e:
@@ -253,8 +274,9 @@ def voice_(inp: VoiceIn):
 
 @app.get("/voice/status")
 def voice_status():
-    from backend import voice
-    return {"configured": voice.configured(), "model": voice.MODEL}
+    from backend import voice, atropos_client
+    st = atropos_client.status() or {}
+    return {"configured": voice.configured() or bool((st.get("voice") or {}).get("configured")), "model": voice.MODEL, "node": bool(st)}
 
 
 @app.get("/ledger")
