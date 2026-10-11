@@ -1,0 +1,44 @@
+node_modules/
+.env
+
+# build output and local snapshots of earlier designs
+dist/
+releases/
+
+# caches and logs
+data/voice/
+data/*.log
+data/*.err
+data/last-run.json
+
+# one-off edit scripts used while building the pages, and machine-specific setup
+scripts/apply-*.js
+scripts/patch-*.js
+scripts/tune-face-v*.js
+scripts/add-static-launch.js
+scripts/fix-launch.js
+scripts/make-env.js
+scripts/rename-atropos.js
+scripts/readme-atropos.js
+
+# our own competitive notes for the track stay private
+data/strategy-*
+data/pressure-jev.json
+
+# runtime state and caches (rebuilt by the server and scripts)
+data/history-cache.json
+data/ledger.json
+# full contract-term texts are re-fetched by scripts/fetch_rules.py; data/rules.json keeps the clauses we use
+data/rules/*.txt
+
+# GitHub Pages build output
+_site/
+
+# the joined engines: their dependencies and their built pages (built by scripts/build-tools.js)
+services/**/node_modules/
+services/**/.venv/
+services/**/__pycache__/
+services/**/.cache/
+services/**/dist/
+public/basis/
+public/leaf/
