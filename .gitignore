@@ -8,3 +8,6 @@ frontend/node_modules/
 frontend/dist/
 backend/.cache/
 data/voice/
+services/atropos/node_modules/
+services/atropos/.env
+services/atropos/data/voice/

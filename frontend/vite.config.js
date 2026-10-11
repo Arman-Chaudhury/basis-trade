@@ -7,5 +7,7 @@ export default defineConfig({
   server: { proxy: {
     '/api': { target: 'http://localhost:8001', changeOrigin: true, rewrite: p => p.replace(/^\/api/, '') },
     '/leaf': { target: 'http://localhost:8001', changeOrigin: true, rewrite: p => p.replace(/^\/leaf/, '/api') },
+    '/node': { target: 'http://localhost:4411', changeOrigin: true, rewrite: p => p.replace(/^\/node/, '') },
+    '/landing/api': { target: 'http://localhost:4411', changeOrigin: true, rewrite: p => p.replace(/^\/landing/, '') },
   } },
 })

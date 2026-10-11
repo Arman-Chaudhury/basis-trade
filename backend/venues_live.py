@@ -102,5 +102,26 @@ def polymarket_ladder(rid):
             "medianSpread": statistics.median(spreads) if spreads else None, "source": "live" + (" (cached)" if stale else ""), "slug": slug}
 
 
+NODE = __import__("os").getenv("ATROPOS_URL", "http://127.0.0.1:4411")
+
+
+def node_venues(rid):
+    """Every venue Atropos's Node service reads (Kalshi, Kalshi via IBKR, ForecastEx, Limitless, Futuur, CME via IBKR),
+    live from /api/venues when the service is up. Returns [] when it is not."""
+    try:
+        j, stale = get_json(f"{NODE}/api/venues", None, ttl=60)
+    except Exception:  # noqa: BLE001
+        return []
+    rel = next((r for r in j.get("releases", []) for _ in [0] if r["id"] == rid), None)
+    if not rel: return []
+    out = []
+    for v in rel["venues"]:
+        if v["venue"] == "Kalshi": continue  # our own direct reader covers it
+        if not v.get("ok"): out.append({"venue": v["venue"], "ok": False, "error": v.get("error"), "via": "atropos"}); continue
+        out.append({"venue": v["venue"], "ok": True, "title": v.get("title"), "labels": v["labels"], "p": v["p"], "volume": v.get("volume"), "medianSpread": v.get("medianSpread"),
+                    "source": "live via Atropos" + (" (cached)" if stale else ""), "via": "atropos"})
+    return out
+
+
 def live_venues(rid, unit):
-    return [kalshi_ladder(rid, unit), polymarket_ladder(rid)]
+    return [kalshi_ladder(rid, unit), polymarket_ladder(rid)] + node_venues(rid)

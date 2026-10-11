@@ -1,5 +1,24 @@
 # Basis — from the odds to the trade
 
+**One product from three projects.** Ethan's one-scroll landing is the front door (`/`). Behind it, one website with two services:
+
+- **Python (FastAPI, :8001)** — Basis (calibration, basis, trust, betas), Leaf (Gemini EX + Lego screener), Atropos's core ported (exposure, hedge, history, ledger), and the pipeline that chains them.
+- **Node (Atropos as-is, :4411, vendored under `services/atropos`)** — the six venue readers, Atty's voiced walkthrough, Jev, SnapTrade, 13F, news, fine-print rules, the console.
+
+The Vite gateway (:5177) makes them one origin: `/api/*` → Python, `/leaf/*` → Leaf routers, `/node/*` and `/landing/api/*` → Node.
+
+| Route | What | From |
+|---|---|---|
+| `/` | one-scroll landing, fed live by both services | Ethan |
+| `/pipeline` | sentence → calibrated multi-venue ladder → exposure → contract vs equity hedge → history → verdict → ledger | all three |
+| `/research` | Leaf's screener and strategy math | Juvo |
+| `/console`, `/atty` | Atropos's console and Atty's walkthrough | Ethan |
+| `/app`, `/calibration`, `/events/:id` | Basis's desk and calibration curve | Arman |
+| `/gallery` | the earlier topology landing | Arman |
+
+**How the engines feed each other.** Every venue ladder (Kalshi and Polymarket read here; Kalshi via IBKR, ForecastEx, Limitless, Futuur, CME via Atropos) is re-binned onto common edges, passed through Basis's calibration curve, and combined into a **trust-weighted consensus** (weights are Basis's per-venue trust scores; fed-funds futures stay a reference, not a vote). That distribution drives Atropos's exposure engine; the contract hedge is trust-gated; Leaf's screener produces the competing equity hedge in the same step.
+
+
 One sentence in, one honest trade (or none) out. Three Hack Knight projects fused into one pipeline:
 
 | Step | What | From |
@@ -26,7 +45,7 @@ Frontend: the Basis topology landing + desk + **`/pipeline`** + **`/research`** 
 
 ## STATUS (2026-10-10)
 - Pipeline works end to end for `cpi`, `nfp` and `fomc`, backend and `/pipeline` page, verified in the browser. Fed tails are the Cut-0.25 and Hike buckets as a 25bp surprise against the expected move (kernels: −0.6% SPX, 20bp on the 2y per 25bp).
-- Kalshi and Polymarket ladders are live (60s cache, falls back to last good response). IBKR/ForecastEx/Limitless/Futuur/CME rows come from Atropos's committed snapshot (`data/atropos/`); their live readers are in Atropos `lib/markets.js`, not yet ported.
+- All venue ladders are live when the Node service is up (60s cache, last-good fallback); without it the Atropos snapshot rows are used.
 - Contract book is estimated (fair ± 1¢): wire a live book for real bid/ask.
 - History is the Atropos sample-portfolio snapshot, labelled; live BLS/ALFRED path to port from `lib/history.js`.
 - TODO: Tiger Data (Postgres hypertables for `prices`/`market_state`), GoDaddy domain.
