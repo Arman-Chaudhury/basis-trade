@@ -1,4 +1,4 @@
-# Basis — from the odds to the trade
+# Atropos — from the odds to the trade
 
 **One product from three projects.** Ethan's Atropos landing is the front door (`/`, served by the Node service; his one-scroll page is at `/node/topo/`). Behind it, one website with two services:
 

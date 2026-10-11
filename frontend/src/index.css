@@ -1,28 +1,29 @@
 @import "tailwindcss";
 @theme {
-  --color-ink: #F2F2F0;
-  --color-ink-2: #FAFAF8;
-  --color-ink-3: #E6E6E2;
-  --color-bone: #151515;
-  --color-grey-300: #4A4A48;
-  --color-grey-500: #7C7C78;
-  --color-grey-700: #C9C9C4;
-  --color-brass: #7A6A3F;
-  --font-display: "Space Grotesk", "Helvetica Neue", Arial, sans-serif;
-  --font-sans: "Inter", "Helvetica Neue", Arial, sans-serif;
-  --font-mono: "Space Mono", ui-monospace, Menlo, monospace;
+  --color-ink: #151515;
+  --color-ink-2: #1b1b1a;
+  --color-ink-3: #262625;
+  --color-bone: #f3f1ea;
+  --color-grey-300: #e4e2d8;
+  --color-grey-500: #a9a9a4;
+  --color-grey-700: #3a3a37;
+  --color-brass: #d9bb72;
+  --color-accent: #8db0e6;
+  --font-display: "Newsreader", "Iowan Old Style", "Times New Roman", Georgia, serif;
+  --font-sans: "Geist", "Helvetica Neue", Arial, system-ui, sans-serif;
+  --font-mono: "Geist Mono", ui-monospace, "SF Mono", Menlo, monospace;
 }
-:root { color-scheme: light; }
+:root { color-scheme: dark; }
 html.lenis, html.lenis body { height: auto; }
 .lenis.lenis-smooth { scroll-behavior: auto !important; }
 body { @apply bg-ink text-bone antialiased; font-family: var(--font-sans); overflow-x: clip; }
-.display { font-family: var(--font-display); text-transform: none; letter-spacing: -0.035em; line-height: 0.95; font-weight: 400; }
-.h1 { font-family: var(--font-display); text-transform: none; letter-spacing: -0.035em; line-height: 0.95; font-weight: 400; font-size: clamp(3rem, 8vw, 8.5rem); }
-.h2 { font-family: var(--font-display); text-transform: none; letter-spacing: -0.035em; line-height: 0.95; font-weight: 400; font-size: clamp(2rem, 4.6vw, 4.6rem); }
-.h3 { font-family: var(--font-display); text-transform: none; letter-spacing: -0.035em; line-height: 0.95; font-weight: 400; font-size: clamp(1.3rem, 2.2vw, 2rem); letter-spacing: -0.02em; }
-.eyebrow { font-size: 11px; text-transform: uppercase; letter-spacing: 0.18em; color: var(--color-grey-500); font-family: var(--font-mono); }
+.display { font-family: var(--font-display); font-weight: 400; letter-spacing: -0.015em; line-height: 1.0; }
+.h1 { font-family: var(--font-display); font-weight: 400; letter-spacing: -0.015em; line-height: 1.0; font-size: clamp(2.6rem, 6vw, 5.5rem); }
+.h2 { font-family: var(--font-display); font-weight: 400; letter-spacing: -0.015em; line-height: 1.0; font-size: clamp(2rem, 4.6vw, 4.6rem); }
+.h3 { font-family: var(--font-display); font-weight: 400; letter-spacing: -0.015em; line-height: 1.0; font-size: clamp(1.3rem, 2.2vw, 2rem); letter-spacing: -0.02em; }
+.eyebrow { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--color-grey-500); font-family: var(--font-mono); }
 .pill { @apply inline-flex items-center justify-center rounded-full bg-bone text-ink px-6 h-11 text-sm font-medium transition-transform duration-300 hover:scale-[1.03]; }
-.theme-invert { background: #151515; color: #F2F2F0; }
+.theme-invert { background: #f6f5f1; color: #171717; }
 .pill-ghost { @apply inline-flex items-center justify-center rounded-full border border-grey-700 text-bone px-5 h-10 text-sm hover:border-grey-300 transition-colors; }
 .card { @apply rounded-2xl border border-grey-700/60 bg-ink-2 p-4; }
 .mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
@@ -51,17 +52,15 @@ input[type=range] { accent-color: #E1E5E5; }
 .caption { font-family: var(--font-display); font-weight: 300; letter-spacing: -0.03em; font-size: clamp(2.4rem, 6vw, 5.5rem); line-height: 1; }
 .static-shot .terrain-fixed { position: absolute; height: 900px; }
 
-/* dark variant of the topology theme (toggle in header, persisted) */
-html.dark {
-  --color-ink: #111113;
-  --color-ink-2: #18181B;
-  --color-ink-3: #222226;
-  --color-bone: #EDEDEA;
-  --color-grey-300: #B8B8B3;
-  --color-grey-500: #80807B;
-  --color-grey-700: #2E2E33;
-  --color-brass: #D9B46A;
-  color-scheme: dark;
-}
-html.dark .theme-invert { background: #F2F2F0; color: #151515; }
-html.dark .rule { background: rgba(237,237,234,0.3) !important; }
+
+/* Atropos nav, shared by every page of the app (mirrors services/atropos/public/skin.css) */
+.anav { position: sticky; top: 0; z-index: 30; display: flex; justify-content: space-between; align-items: center; gap: 16px;
+  padding: 18px clamp(16px, 4vw, 48px); background: rgba(21,21,21,.84); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(228,226,216,.12); }
+.anav .brand { display: inline-flex; align-items: center; gap: 8px; color: var(--color-bone); text-decoration: none; }
+.anav .brand b { font: 500 19px/1 var(--font-display); letter-spacing: -0.01em; }
+.anav .tag { font: 500 9px/1 var(--font-mono); letter-spacing: .06em; text-transform: uppercase; border: 1px solid currentColor; padding: 3px 5px 2px; border-radius: 3px; opacity: .85; }
+.anav .links { display: flex; flex-wrap: wrap; gap: 6px 22px; justify-content: flex-end; }
+.anav .links a { font: 400 11px/1 var(--font-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--color-grey-300); text-decoration: none; opacity: .72; }
+.anav .links a:hover, .anav .links a.active { opacity: 1; color: var(--color-accent); }
+.btn-text { color: var(--color-bone); }
+.pill { background: var(--color-bone); color: var(--color-ink); }

@@ -39,11 +39,11 @@ export default function Overview() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="h2">Which prediction-market prices are actually a signal?</h1>
+        <h1 className="h2">Signals: which odds are worth trusting?</h1>
         <p className="text-sm text-grey-300 mt-1">Calibrated probability, basis vs. the traditional-market proxy, and a 0–100 trust score for each event. Click a row.</p>
       </div>
       <BeliefBox />
-      {err && <div className="card text-rose-200 text-sm">Backend unreachable: {err}. Run <code>make dev</code> (or <code>make demo</code>).</div>}
+      {err && <div className="card text-rose-200 text-sm">Backend unreachable: {err}. Run <code>make dev</code>.</div>}
       <div className="card p-0 overflow-x-auto">
         <table className="w-full text-sm">
           <thead className="border-b border-grey-700/60"><tr>{COLS.map(([k, l, c]) => th(k, l, c))}<th className="px-3 py-2 text-xs text-grey-300 text-right">Venues</th></tr></thead>

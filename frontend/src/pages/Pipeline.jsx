@@ -42,7 +42,7 @@ export default function Pipeline() {
   const tail = sig?.tails?.[side]
   return (
     <div className="max-w-6xl mx-auto">
-      <div className="eyebrow mb-3">From the odds to the trade</div>
+      <div className="eyebrow mb-3">Pipeline · from the odds to the trade</div>
       <h1 className="h2">Say what you hold and what you fear.</h1>
       <form onSubmit={run} className="mt-6 flex gap-3">
         <input value={q} onChange={e => setQ(e.target.value)} className="flex-1 rounded-xl bg-ink-2 border border-grey-700 px-4 py-3 text-base focus:outline-none focus:border-bone" />
@@ -52,7 +52,7 @@ export default function Pipeline() {
       {err && <div className="mt-4 text-rose-300 text-sm">{err}</div>}
 
       {out && (<>
-        <Step n="01 · Signal" title={sig.name} note={`${sig.source} · parsed by ${out.provenance.parser}`}>
+        <Step n="01 · Signal" title={sig.name} note={`${sig.source}`}>
           <div className="flex flex-wrap items-center gap-3 text-sm">
             <span className="text-grey-300">resolves {sig.date}</span><TrustPill score={sig.trust} /><span className="eyebrow">{sig.verdict}</span>
             {sig.thresholds_from && <span className="eyebrow">{sig.thresholds_from}</span>}
@@ -103,7 +103,7 @@ export default function Pipeline() {
               </>)}
             </div>
             <div className="card">
-              <div className="eyebrow">Equity hedge · Leaf screener</div>
+              <div className="eyebrow">Equity hedge · pair screener</div>
               {out.express.equity.skipped ? <p className="mt-3 text-grey-300">{out.express.equity.skipped}</p> : (<>
                 <div className="mt-2 text-lg">{out.express.equity.action} {out.express.equity.ticker} · {usd(out.express.equity.dollars)}</div>
                 <div className="mt-3 grid grid-cols-3 gap-2 text-sm mono">
@@ -129,13 +129,13 @@ export default function Pipeline() {
           <div className="mt-4 flex items-center gap-4">
             <button onClick={hear} disabled={!voice.configured} className="btn-text disabled:opacity-40" title={voice.configured ? 'ElevenLabs' : 'set ELEVENLABS_API_KEY'}>Hear it</button>
             <audio ref={audio} />
-            <span className="eyebrow">ledger #{out.ledger_id} · every number from code · {out.provenance.engine} · calibration: {out.provenance.calibration}</span>
+            <span className="eyebrow">ledger #{out.ledger_id} · every number from code</span>
           </div>
         </Step>
       </>)}
 
       {out?.context && (out.context.funds?.funds?.length > 0 || out.context.news?.articles?.length > 0) && (
-        <Step n="06 · Context" title="Who else holds this, and what's in the news" note="SEC 13F filings and news feeds, from the Atropos service">
+        <Step n="06 · Context" title="Who else holds this, and what's in the news" note="SEC 13F filings and news feeds">
           <div className="grid md:grid-cols-2 gap-4">
             <div className="card">
               <div className="eyebrow">Public money next to you</div>
@@ -169,7 +169,7 @@ export default function Pipeline() {
           </table>
         </Step>
       )}
-      <div className="mt-16 eyebrow">Read-only. Nothing is ever traded for you. <Link to="/app" className="underline">Desk</Link> · <Link to="/" className="underline">Home</Link></div>
+      <div className="mt-16 eyebrow">Read-only. Nothing is ever traded for you.</div>
     </div>
   )
 }

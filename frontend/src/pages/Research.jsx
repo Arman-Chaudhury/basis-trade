@@ -14,9 +14,9 @@ export default function Research() {
   useEffect(() => { getStrategies().then(d => setStrategies(d.strategies)).catch(() => setStrategies({})) }, [])
   return (
     <div className="max-w-6xl mx-auto">
-      <div className="eyebrow mb-3">Research · Leaf</div>
+      <div className="eyebrow mb-3">Research · pairs</div>
       <h1 className="h2">Find the pairs that move together.</h1>
-      <p className="mt-4 max-w-2xl text-grey-300">Pick a strategy or set your own conditions, and Leaf screens a universe of real daily prices for cointegration, correlation and how fast a spread snaps back, then returns a ranked shortlist with the numbers, the charts, and a plain-language reading of why each pair fits. The same engine finds the equity hedge in the <Link to="/pipeline" className="underline">pipeline</Link>.</p>
+      <p className="mt-4 max-w-2xl text-grey-300">Pick a strategy or set your own conditions, and Atropos screens a universe of real daily prices for cointegration, correlation and how fast a spread snaps back, then returns a ranked shortlist with the numbers, the charts, and a plain-language reading of why each pair fits. The same screen finds the equity hedge in the <Link to="/pipeline" className="underline">pipeline</Link>.</p>
       {strategies && (
         <div className="mt-10 grid md:grid-cols-3 gap-4">
           {Object.entries(strategies).map(([k, s]) => (

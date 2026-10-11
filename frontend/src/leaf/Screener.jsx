@@ -54,7 +54,7 @@ export default function Screener({ strategies, query }) {
     <div className="screener">
       <header className="wrap page-head">
         <h1>Screener</h1>
-        <p>Pick one or more strategies, or set your own parameters, and Leaf returns the pairs that fit.</p>
+        <p>Pick one or more strategies, or set your own parameters, and Atropos returns the pairs that fit.</p>
       </header>
 
       {strategies && (

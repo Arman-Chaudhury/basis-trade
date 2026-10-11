@@ -142,7 +142,7 @@ export default function ResultsPanel({ scan, strategies }) {
       <section className="empty">
         <h2>Choose a strategy, then find pairs</h2>
         <p>
-          Leaf screens every pair in your universe for correlation, cointegration and how fast the
+          Atropos screens every pair in your universe for correlation, cointegration and how fast the
           spread snaps back, then keeps the pairs that fit each strategy you picked.
         </p>
       </section>
