@@ -1,4 +1,29 @@
-# Atropos — from the odds to the trade
+# Atropos: from the odds to the trade
+
+Prediction markets like Kalshi and Polymarket now put a price on this month's
+CPI print, the next Fed decision, and the jobs number. Trading desks have
+started reading those prices as forecasts, but the raw odds are biased (people
+overpay for long shots), often thin, and sometimes stale. Atropos is the piece
+in between: it takes those odds, corrects them, works out what they mean for
+the stocks you actually hold, and tells you whether a hedge is worth it.
+
+You type one sentence: "I hold 40 SPY, 30 NVDA and 60 TLT and I'm worried about
+a hot CPI print." Atropos reads the odds ladder for that release across six
+venues, runs each through a calibration curve fit on 628 settled Kalshi
+markets, weights the venues by a trust score (liquidity, spread, freshness,
+holder concentration), and turns the result into dollars of exposure per
+holding. Then it shows two ways to cover it side by side: the prediction-market
+contract that pays in that tail, and an equity pair hedge. Every call is
+written to a ledger and settled against the real print, so you can see whether
+it would have paid. No model is allowed to invent a number; every figure in the
+verdict has to trace back to something computed.
+
+We built it in a day at Hack Knight 2026, a team of three, by fusing three
+earlier projects: my Basis (calibration and trust scoring), Ethan's Atropos
+(exposure engine, venue readers, ledger), and Juvo's Leaf (equity screener).
+The rest of this file is the engineering map of how those pieces fit.
+
+## Architecture
 
 **One product from three projects.** Ethan's Atropos landing is the front door (`/`, served by the Node service; his one-scroll page is at `/node/topo/`). Behind it, one website with two services:
 
